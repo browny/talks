@@ -1,0 +1,37 @@
+A Practical Way to Better Abstraction
+
+Browny Lin
+_Gopher_ at LIVEHouse.in
+@brownylin
+browny.lin@livehouse.in
+
+
+* Outline
+
+- Three principles
+- Clean arch howto
+- Inversion of Control
+- Mock and Test
+- Summary
+
+
+* Three principles
+
+- SOLID: [[http://dave.cheney.net/2016/08/20/solid-go-design][SOLID Go Design]]
+- [[https://en.wikipedia.org/wiki/Domain-driven_design][Domain Driven Design]]
+- Clean Arch: [[http://manuel.kiessling.net/2012/09/28/applying-the-clean-architecture-to-go-applications/][Applying The Clean Architecture to Go applications]]
+
+
+* Clean arch howto
+
+- To identify domain: *Make* *up* *metaphors* that don't include computers
+- *One* *way* *dependency*: If lower leval needs function of higher level, inject it, don't depend on it
+- *Connection* *interface* says `be used as`, *Essence* *interface* says `is a`
+- *How* *does* *it* *be* *used* is possilbe to evolve to *what* *it* *is*
+- Everything should be testable! Including time traveling
+- Duplication is far cheaper than the wrong abstraction - [[http://www.sandimetz.com/blog/2016/1/20/the-wrong-abstraction][metz]]
+
+
+* Clean arch
+
+.image images/clean-arch.png 550 _
