@@ -7,31 +7,143 @@ browny.lin@livehouse.in
 
 
 * Outline
-
 - Three principles
-- Clean arch howto
+- Clean Arch 
 - Inversion of Control
 - Mock and Test
 - Summary
 
 
 * Three principles
-
-- SOLID: [[http://dave.cheney.net/2016/08/20/solid-go-design][SOLID Go Design]]
+- [[http://dave.cheney.net/2016/08/20/solid-go-design][SOLID]]
 - [[https://en.wikipedia.org/wiki/Domain-driven_design][Domain Driven Design]]
-- Clean Arch: [[http://manuel.kiessling.net/2012/09/28/applying-the-clean-architecture-to-go-applications/][Applying The Clean Architecture to Go applications]]
+- [[http://manuel.kiessling.net/2012/09/28/applying-the-clean-architecture-to-go-applications/][Clean Architecture]]
 
 
-* Clean arch howto
+* 
+[[https://blog.acolyer.org/2016/10/21/a-design-methodology-for-reliable-software-systems/][A design methodology for reliable software systems]]
 
-- To identify domain: *Make* *up* *metaphors* that don't include computers
+
+* Modularity (1/2)
+A good modularity is based on *levels* *of* *abstraction*
+
+- Each level has *resources* which it owns exclusively and which other levels are not permitted to access
+- Lower levels are not aware of the existence of higher levels and therefore may not refer to them in any way
+- With good modularity, the system is broken into a hierarchy of partitions (modules), with each partition representing one level of abstraction and consisting of one or more functions which share common resources
+
+
+* Modularity (2/2)
+The *connections* between modules are *the* *assumptions* *which* *the* *modules* *make* *about* *each* *other*. Some rules should be followed.
+
+- Control connections are limited by the rules about the hierarchy of levels of abstraction (控制是單向的)
+- Connections in data passed between partitions are limited to the explicit arguments passed from the functions of one partition to the (external) functions of another partition. Implicit interaction on common data may only occur among functions within a partition (跨 module 的資料傳遞要明確, 對於資料的假設越少越好)
+- The combined activity of the functions in a partition support its abstraction and nothing more (module 中的 func 組合都是為了支持其對外展示的抽象, 僅此而已)
+
+
+* Clean Arcitecture
+
+
+* Tips
+- To identify domain: *Make* *up* *metaphors* that don't include computers (don't include implementations)
 - *One* *way* *dependency*: If lower leval needs function of higher level, inject it, don't depend on it
 - *Connection* *interface* says `be used as`, *Essence* *interface* says `is a`
 - *How* *does* *it* *be* *used* is possilbe to evolve to *what* *it* *is*
 - Everything should be testable! Including time traveling
-- Duplication is far cheaper than the wrong abstraction
 
 
-* Clean arch
-
+* 
 .image images/clean-arch.png 550 _
+
+
+* Bridger
+.image images/vod-flow.png 550 _
+
+
+* Bridger
+.image images/clean-arch-bridger.png 550 _
+
+
+* Machinery
+- `Machinery` is kind of *Essence* *interface*
+- `Machinery` hides how machine operates
+- `Machinery` only expose the behaviors the `Worker` cares
+.code codes/machine.go /Machinery/,/}/
+
+
+* One way dependency (injection)
+- `start` and `patrol` are injected from `gcp` and `requester`
+- They are kind of *Connection* *interface*
+.code codes/machine.go /^func \(m \*Machine\) Run/,/^}/
+
+
+* Machine implements Machinery
+.code codes/machine.go /^type Machine struct/,/^}/
+
+
+* Worker
+- `Worker` maintains working state, but don't care underlying working force (machinery)
+.code codes/worker.go /^type Worker/,/^}/
+
+
+* Mockable Machine
+.code codes/worker.go /^func \(w \*Worker/,/^}/
+
+
+* Inversion of Control
+
+
+* A naive implementation of polling
+.code codes/instance_manager.go /ProbeSnapshotReady/,/^}/
+
+
+* Control
+- Poller *controls* Polled; Poller *depends* on Polled
+- Poller *controls* the order; Poller *depends* on order
+
+
+* Depends on abstraction
+- `Pollable` is kind of *Essence* *interface*
+.code codes/polling.go /Pollable/,/^}/
+
+
+* Poller consists of Pollable
+.code codes/polling.go /DefaultPoller/,/^}/
+
+
+* Poller controls the order 
+.code codes/polling.go /func \(dp \*DefaultPoller\) Poll/,/^}/
+
+
+* How to be used
+.code codes/rest.go /pollable/,/dp\./
+
+
+* Pollable Implementation
+.code codes/livevod.go /^type VodStatusPollableImpl/,/}/
+.code codes/livevod.go /func \(vsp \*VodStatusPollableImpl\) Query/,/^}/
+
+
+* Inversion
+- Poller consists of Pollable, Pollable hides Polled dependency
+- Pollable doesn't care about order
+
+
+* Mock & Test
+
+
+* Handle live vod uploaded
+.code codes/livevod.go /func \(vsp \*VodStatusPollableImpl\) EventHandler/,/^}/
+
+
+* GenMp4
+.code codes/livevod.go /func \(vsp \*VodStatusPollableImpl\) GenMp4/,/^}/
+
+
+* GenMp4 Test
+.code codes/livevod_test.go /Test07_GenMp4/,/^}/
+
+
+* Summary
+- Starts from usecases, mind the connection of control and data
+- *Connection* *interface* says `be used as`, *Essence* *interface* says `is a`
+- Doc, Test, *Simple* (this talk try to build a mind framework to a simple design)
