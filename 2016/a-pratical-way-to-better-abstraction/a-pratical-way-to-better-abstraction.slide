@@ -147,3 +147,7 @@ The *connections* between modules are *the* *assumptions* *which* *the* *modules
 - Starts from usecases, mind the connection of control and data
 - *Connection* *interface* says `be used as`, *Essence* *interface* says `is a`
 - Doc, Test, *Simple* (this talk try to build a mind framework to a simple design)
+
+
+* 
+[[https://www.youtube.com/watch?v=mVVNJKv9esE][On the Spectrum of Abstraction]]
