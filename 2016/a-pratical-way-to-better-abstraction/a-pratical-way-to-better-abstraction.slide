@@ -29,7 +29,7 @@ browny.lin@livehouse.in
 - *Connection* *interface* says `be used as`, *Essence* *interface* says `is a`
 - *How* *does* *it* *be* *used* is possilbe to evolve to *what* *it* *is*
 - Everything should be testable! Including time traveling
-- Duplication is far cheaper than the wrong abstraction - [[http://www.sandimetz.com/blog/2016/1/20/the-wrong-abstraction][metz]]
+- Duplication is far cheaper than the wrong abstraction
 
 
 * Clean arch
