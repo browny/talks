@@ -1,0 +1,270 @@
+Structures in Go
+
+Browny Lin
+Gopher at LIVEHouse.in
+@brownylin
+browny.lin@livehouse.in
+
+
+* livehouse.in
+.image images/lh.png 500 _
+
+
+* straas.io
+.image images/straas.png 420 _
+
+
+* Backend in LIVEHouse.in
+
+- Streaming: _C_
+- Messaging: _Node.js_ (plan to _Go_)
+- Infrastructure: _Go_
+
+
+* Outline
+
+- Delivery
+- Collaboration 
+- Code
+- Summary
+
+
+* Delivery 
+
+.image images/delivery.jpg 500 _
+
+
+* Go rocks #1
+- Statically linked binary
+
+
+* Runing unit
+
+.image images/run-unit.png 500 _
+
+
+* Building module binary
+
+.image images/build-bin.png 500 _
+
+
+* Dockerfile of build image
+
+.code layout.go /golang:1.7.1/,/rm \/go/
+
+- Pre-installed dependencies -> Shorter build time
+
+
+* Building deployed image
+
+.image images/build-run-image.png 500 _
+
+
+* Dockerfile of deployed image
+
+.code layout.go /wego-golang-run/,/ENTRYPOINT/
+
+- wego-golang-run
+
+.code layout.go /jessie/,/apt\/list/
+
+
+* Summary
+
+- Unified deploy flow
+- Shorten build time by prebuilt dependences
+- Exactly same image deployed to staging or production env
+
+
+* Collaboration 
+
+.image images/collision.jpg 500 _
+
+
+* Go rocks #2
+- Powerful toolchain
+
+
+* One and only one repository
+
+_Pros:_
+
+- Closer collaboration
+- Higher leverage
+- More debate
+
+_Cons?_
+
+- Version control
+- Dep management
+- Build and test
+- Deploy
+
+
+* Repository layout
+
+.code layout.go /wego/,/gopkg/
+
+- glide: [[https://github.com/Masterminds/glide][github.com/Masterminds/glide]]
+
+
+* Hook of git
+
+.code layout.go /go vet/,/gt \-short/
+
+- [[https://github.com/rsc/gt][gt]]: go test but faster (cached)
+
+
+* Cons review
+
+*Version* *control*
+
+- Build system output image for each commit, module decides which one to be deployed
+
+*Dep* *management*
+
+- One shared dep version for all modules, breaks often but be more updated
+
+*Build* & *Test*
+
+- Isolation of container makes sure the env among build/test/run are the same 
+
+*Deploy*
+
+- Each deploy identified with merge request commit hash, it is easy to rollback
+
+
+* Summary
+
+- One single repository works well
+- Make toolchain merged into daily work flow
+
+
+* Code 
+
+.image images/tower.jpg 500 _
+
+
+* Go rocks #3
+- The bigger the interface, the weaker the abstraction ([[https://go-proverbs.github.io/][Go Proverbs]])
+
+
+* How should I organize my code?
+
+Common approaches
+
+- *#1* Monolithic package: all codes in single package
+- *#2* Rails-style layout: group code by it's functional type (ex: MVC)
+- *#3* Group by modules: group code by module
+
+Problems
+
+- *#1*: Not maintainable for larger codebase
+- *#2*, *#3*: bad naming & circular dependencies
+
+References
+
+- [[https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1][Standard Package Layout]]
+
+
+* Requirements of a good structure
+
+- Clear responsibility
+- Low coupling, High cohesion
+- Testable
+
+
+* Clean Architecture
+.image images/clean-arch.jpg 550 _
+
+
+* Bussiness vs. Application 
+
+- Business: the core abstraction of business logic
+- Application: behind implementation makes the abstraction be pratical
+
+.image images/clean-arch-table.png 
+
+
+* Scenario
+
+.image images/scenario.png 500 _
+
+
+* Task of Middle
+
+For any uploading client, choosing one *available* transcoder to serve
+
+*Available*: 
+- It is not serving (query from datastore)
+- It is healthy (query API of transcoder)
+
+
+* Naive way
+
+.code layout.go /package controller/,/^}/
+.code layout.go /GetAvailableTranscoder/,/^}/
+
+
+* What's the problem?
+
+- Clear responsibility (get worse when code base grows)
+- Low coupling, High cohesion (highly depends on implementation)
+- Testable (testing needs to setup too much things)
+
+.image images/intersection.jpg 350 _
+
+
+* 
+
+.image images/onewayway.jpg 550 _
+
+
+* One way dependency
+
+- One way makes life easier (no circular dependency)
+- One way makes testing easier (depends on abstraction)
+- One way forces you to think (better domain object)
+
+.image images/oneway.png 250 _
+
+
+* Clean way
+
+.code layout.go /package usecases/,/the same/
+
+- injection framework: [[https://godoc.org/github.com/facebookgo/inject][github.com/facebookgo/inject]]
+
+
+* Test (1/2)
+
+.code layout.go /Test_GetAvailableTranscoder/,/Times/
+
+
+* Test (2/2)
+
+.code layout.go /tested.GetAvailableTranscoder/,/^}/
+
+- `mockery` `-name` `<interface_name>`: [[https://github.com/vektra/mockery][github.com/vektra/mockery]]
+- testify: [[https://github.com/stretchr/testify][github.com/stretchr/testify]]
+
+
+* Summary
+
+- One way dependency is good
+- 高階模組不該依賴低階模組, 兩者皆應依賴抽象
+- Developer is usually not domain expert, but good structure makes us possible to be
+
+
+* Conclusion
+
+- Go style of LIVEHouse was introduced
+- Go 容易佈署, 工具鏈強大和充滿彈性與想像的程式結構讓你住套房 :metal:
+
+.image images/vim-go.png 400 _
+
+* References
+
+- [[http://dave.cheney.net/2016/08/20/solid-go-design][SOLID Go Design]]
+- [[https://en.wikipedia.org/wiki/Domain-driven_design][Domain Driven Design]]
+- [[http://manuel.kiessling.net/2012/09/28/applying-the-clean-architecture-to-go-applications/][Applying The Clean Architecture to Go applications]]
