@@ -38,7 +38,7 @@ browny.lin@livehouse.in
 - Statically linked binary
 
 
-* Runing unit
+* Running unit
 
 .image images/run-unit.png 500 _
 
@@ -71,9 +71,9 @@ browny.lin@livehouse.in
 
 * Summary
 
-- Unified deploy flow
+- Unify deploy flow
 - Shorten build time by prebuilt dependences
-- Exactly same image deployed to staging or production env
+- Deploy the same image to staging and production env
 
 
 * Collaboration 
@@ -85,7 +85,7 @@ browny.lin@livehouse.in
 - Powerful toolchain
 
 
-* One and only one repository
+* Monolithic repository
 
 _Pros:_
 
@@ -108,11 +108,11 @@ _Cons?_
 - glide: [[https://github.com/Masterminds/glide][github.com/Masterminds/glide]]
 
 
-* Hook of git
+* Git Hooks
 
 .code layout.go /go vet/,/gt \-short/
 
-- [[https://github.com/rsc/gt][gt]]: go test but faster (cached)
+- [[https://github.com/rsc/gt][github.com/rsc/gt]]: go test but faster (cached)
 
 
 * Cons review
@@ -268,3 +268,5 @@ For any uploading client, choosing one *available* transcoder to serve
 - [[http://dave.cheney.net/2016/08/20/solid-go-design][SOLID Go Design]]
 - [[https://en.wikipedia.org/wiki/Domain-driven_design][Domain Driven Design]]
 - [[http://manuel.kiessling.net/2012/09/28/applying-the-clean-architecture-to-go-applications/][Applying The Clean Architecture to Go applications]]
+
+.image images/recruit.jpg 400 _
