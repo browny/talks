@@ -141,7 +141,7 @@ type Machine struct {
 	func (m *Machine) IsHealthy(host string) bool {
 		...
 	}
-}
+} 
 `
 
 var clean = `
@@ -158,7 +158,7 @@ type MachineReq interface {
 type Dispatcher struct {
 	machineDao MachineDao
 	machineReq MachineReq
-}
+} 
 `
 
 var clean = `
