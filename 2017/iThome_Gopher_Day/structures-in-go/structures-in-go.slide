@@ -1,0 +1,275 @@
+Structures in Go
+Organize things in Go based technology stack
+
+Browny Lin
+Backend Engineer, iKala
+@brownylin
+browny.lin@straas.io
+
+
+* Introduction
+
+
+* 
+
+- [[https://livehouse.in][livehouse.in]]
+- [[https://straas.io][straas.io]]
+- [[https://gcp.expert][gcp.expert]]
+
+.image images/iKala_logo.jpg 300 _
+
+
+* Outline
+
+- Introduction
+- Mono repo
+- Clean architecture
+- Container delivered
+- Conclusion
+
+
+* Microservices
+
+_Benifits_
+
+⭕ Strong module boundaries
+⭕ Independent deployment
+⭕ Technology diversity
+
+_Costs_
+
+❌ Distribution
+❌ Eventual consistency
+❌ Operational complexity
+
+
+* The chain
+
+Services
+🔻
+CI/CD flow (Container based delivery)
+🔻
+Structure in module (Clean architecture)
+🔻
+Team collaboration (Mono repository)
+
+
+* Mono repository
+
+
+* Multiple repos
+
+Multiple repos looks intuitive, but watch outs the costs of microservices
+
+- Distribution (Knowledge are distributed)
+- Eventual consistency (Hard to enforce standardization)
+- Operational complexity (Duplication)
+
+
+* Concerns of mono repo (1/2)
+
+- Dependency management
+- Build and Test
+- Operational complexity
+
+
+* Concerns of mono repo (2/2)
+
+- Dependency management 👉 The necessary price
+- Build and Test 👉 It's abount *INTEGRATION* (later)
+- Operational complexity 👉 It's about *DELIVERY* (later)
+
+
+* Structure in mono repo
+
+.code layout.go /wego/,/modules/
+
+🔖 [[https://github.com/Masterminds/glide][github.com/Masterminds/glide]]
+
+
+* Clean architecture
+
+* How should I organize my code?
+
+Common approaches
+
+- *#1* Monolithic package: all codes in single package
+- *#2* Rails-style layout: group code by it's functional type (ex: MVC)
+- *#3* Group by modules: group code by module
+
+Problems
+
+- *#1*: Not maintainable for larger codebase
+- *#2*, *#3*: bad naming & circular dependencies
+
+🔖 [[https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1][Standard Package Layout]]
+
+
+* 3 principles for good design
+
+- Document it is easy
+- Test it is easy
+- Delete/Change/Extend it is easy
+
+🔖 [[http://programmingisterrible.com/post/139222674273/write-code-that-is-easy-to-delete-not-easy-to][Write code that is easy to delete, not easy to extend]]
+
+
+* Clean Architecture
+
+A mind model of code structure to prevent poor design
+
+🔖 [[https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html][The Clean Architecture | Uncle Bob]]
+🔖 [[http://manuel.kiessling.net/2012/09/28/applying-the-clean-architecture-to-go-applications/][Applying The Clean Architecture to Go applications]]
+
+
+* Core concepts
+
+- Separation of concern between _Business_ and _Application_
+- One way dependency
+
+
+* Business vs. Application
+
+.image images/clean_arch_quadrant.jpg 500 _
+
+
+* One way dependency
+
+.image images/one_way_dep.png 500 _
+
+
+* Scenario
+
+.image images/scenario.png 500 _
+
+
+* Structure in module
+
+.code layout.go /middle/,/main.go/
+
+🔖 [[https://github.com/spf13/viper][spf13/viper]]
+🔖 [[https://github.com/facebookgo/inject][facebook/inject]]
+
+
+* Example codes
+
+_Task_: Choosing one *available* machine to serve one broadcaster
+
+Specs of *available*:
+
+- It is idle (query from datastore)
+- It is healthy (query API of transcoder)
+
+
+* Naive way (1/2)
+
+.code layout.go /dispatcher.go/,/req\/machine.go/
+.code layout.go /package controller/,/^}/
+
+
+* Naive way (2/2)
+
+.code layout.go /GetAvailableMachine/,/^}/
+
+
+* Problems?
+
+- Document it is NOT easy 👉 Code structures tells fewer things
+- Test it is NOT easy 👉 Setup database connection, http client, etc...
+- Change it is NOT easy 👉 Depends directly on implementations
+
+
+* Clean way (1/3)
+
+.code layout.go /domain\/entity.go/,/req\/machine.go/
+.code layout.go /package domain/,/^} /
+
+
+* Clean way (2/3)
+
+.code layout.go /package usecases/,/^} /
+
+
+* Clean way (3/3)
+
+.code layout.go /\) \*domain.Machine/,/^}/
+
+
+* Problems solved 🙂
+
+- Document it is easy 👉 Code structures tells more things
+- Test it is easy 👉 Replace dependency by mock
+- Change it is easy 👉 Depends on abstraction
+
+* Test (1/2)
+
+.code layout.go /Test_GetAvailableMachine/,/Times/
+
+
+* Test (2/2)
+
+.code layout.go /tested.GetAvailableMachine/,/^}/
+
+🔖 [[https://github.com/vektra/mockery][vektra/mockery]]
+🔖 [[https://github.com/stretchr/testify][stretchr/testify]]
+
+
+* Container delivered
+
+
+* Running unit
+
+.image images/run_unit.png 500 _
+
+
+* Building module binary
+
+.image images/build_bin.png 500 _
+
+
+* Dockerfile of build image
+
+.code layout.go /golang:1.7.1/,/rm \/go/
+
+- Pre-installed dependencies -> Shorter build time
+
+
+* Building deployed image
+
+.image images/build_run_image.png 500 _
+
+
+* Dockerfile of deployed image
+
+.code layout.go /wego-golang-run/,/ENTRYPOINT/
+
+- wego-golang-run
+
+.code layout.go /jessie/,/apt\/list/
+
+
+* CI/CD
+
+_Mono_ _repo_
+
+- Build and Test 👉 It's abount *INTEGRATION* (later)
+- Operational complexity 👉 It's about *DELIVERY* (later)
+
+_How_
+
+- Looks every changes of modules as a whole (Each MR triggers all modules build/test)
+- Same image for different environments
+
+
+* Conclusion
+
+_Mono_ _repo_
+📌 Developers don't have to be full-stack but teams should be - Martin Fowler
+
+_Clean_ _architecture_
+📌 A solid foundation for better abstraction evolution
+
+_Container_ _delivered_
+📌 Microservices with easier operation
+
+.image images/gome.png 250 _
