@@ -1,31 +1,31 @@
 Structures in Go
-Organize things in Go based technology stack
+microservices powered by Go
 
 Browny Lin
-Backend Engineer, iKala
+Backend Engineer, ikala.tv
 @brownylin
 browny.lin@straas.io
 
 
-* Introduction
-
-
 * 
 
-- [[https://livehouse.in][livehouse.in]]
-- [[https://straas.io][straas.io]]
-- [[https://gcp.expert][gcp.expert]]
+.link http://ikala.tv ikala.tv
 
-.image images/iKala_logo.jpg 300 _
+.image images/ikala.png _ 900 
 
 
 * Outline
 
 - Introduction
-- Mono repo
+- Mono repository
 - Clean architecture
-- Container delivered
+- Container delivery
 - Conclusion
+
+
+* 
+
+.image images/microservices.png 500 _
 
 
 * Microservices
@@ -45,12 +45,12 @@ _Costs_
 
 * The chain
 
-Services
-🔻
-CI/CD flow (Container based delivery)
-🔻
+Microservices
+🔗
+CI/CD flow (Container delivery)
+🔗
 Structure in module (Clean architecture)
-🔻
+🔗
 Team collaboration (Mono repository)
 
 
@@ -59,11 +59,16 @@ Team collaboration (Mono repository)
 
 * Multiple repos
 
-Multiple repos looks intuitive, but watch outs the costs of microservices
+Watch outs the costs of microservices
 
-- Distribution (Knowledge are distributed)
-- Eventual consistency (Hard to enforce standardization)
-- Operational complexity (Duplication)
+_Distribution_
+😥 Knowledge are distributed
+
+_Eventual_ _consistency_ 
+😥 Hard to enforce standardization
+
+_Operational_ _complexity_ 
+😥 Duplication
 
 
 * Concerns of mono repo (1/2)
@@ -75,16 +80,21 @@ Multiple repos looks intuitive, but watch outs the costs of microservices
 
 * Concerns of mono repo (2/2)
 
-- Dependency management 👉 The necessary price
-- Build and Test 👉 It's abount *INTEGRATION* (later)
-- Operational complexity 👉 It's about *DELIVERY* (later)
+_Dependency_ _management_ 
+👉 The necessary price
+
+_Build_ _and_ _Test_ 
+👉 It's about *INTEGRATION* (later)
+
+_Operational_ _complexity_ 
+👉 It's about *DELIVERY* (later)
 
 
 * Structure in mono repo
 
 .code layout.go /wego/,/modules/
 
-🔖 [[https://github.com/Masterminds/glide][github.com/Masterminds/glide]]
+⚙️ [[https://github.com/Masterminds/glide][Masterminds/glide]]
 
 
 * Clean architecture
@@ -94,7 +104,7 @@ Multiple repos looks intuitive, but watch outs the costs of microservices
 Common approaches
 
 - *#1* Monolithic package: all codes in single package
-- *#2* Rails-style layout: group code by it's functional type (ex: MVC)
+- *#2* Rails-style layout: group code by it's *functional* type (ex: MVC)
 - *#3* Group by modules: group code by module
 
 Problems
@@ -116,7 +126,7 @@ Problems
 
 * Clean Architecture
 
-A mind model of code structure to prevent poor design
+A solid foundation for better abstraction evolution
 
 🔖 [[https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html][The Clean Architecture | Uncle Bob]]
 🔖 [[http://manuel.kiessling.net/2012/09/28/applying-the-clean-architecture-to-go-applications/][Applying The Clean Architecture to Go applications]]
@@ -126,6 +136,7 @@ A mind model of code structure to prevent poor design
 
 - Separation of concern between _Business_ and _Application_
 - One way dependency
+- Depends on abstraction
 
 
 * Business vs. Application
@@ -138,20 +149,20 @@ A mind model of code structure to prevent poor design
 .image images/one_way_dep.png 500 _
 
 
+* Structure in module
+
+.code layout.go /middle/,/main.go/
+
+⚙️ [[https://github.com/spf13/viper][spf13/viper]]
+⚙️ [[https://github.com/facebookgo/inject][facebook/inject]]
+
+
 * Scenario
 
 .image images/scenario.png 500 _
 
 
-* Structure in module
-
-.code layout.go /middle/,/main.go/
-
-🔖 [[https://github.com/spf13/viper][spf13/viper]]
-🔖 [[https://github.com/facebookgo/inject][facebook/inject]]
-
-
-* Example codes
+* Example
 
 _Task_: Choosing one *available* machine to serve one broadcaster
 
@@ -163,7 +174,7 @@ Specs of *available*:
 
 * Naive way (1/2)
 
-.code layout.go /dispatcher.go/,/req\/machine.go/
+.code layout.go /controller\/bookkeeper.go/,/req\/machine.go/
 .code layout.go /package controller/,/^}/
 
 
@@ -174,9 +185,14 @@ Specs of *available*:
 
 * Problems?
 
-- Document it is NOT easy 👉 Code structures tells fewer things
-- Test it is NOT easy 👉 Setup database connection, http client, etc...
-- Change it is NOT easy 👉 Depends directly on implementations
+_Document_ _it_ _is_ _NOT_ _easy_
+😥 Code structures tells fewer things
+
+_Test_ _it_ _is_ _NOT_ _easy_
+😥 Setup database connection, http client, etc...
+
+_Change_ _it_ _is_ _NOT_ _easy_
+😥 Depends directly on implementations
 
 
 * Clean way (1/3)
@@ -195,12 +211,6 @@ Specs of *available*:
 .code layout.go /\) \*domain.Machine/,/^}/
 
 
-* Problems solved 🙂
-
-- Document it is easy 👉 Code structures tells more things
-- Test it is easy 👉 Replace dependency by mock
-- Change it is easy 👉 Depends on abstraction
-
 * Test (1/2)
 
 .code layout.go /Test_GetAvailableMachine/,/Times/
@@ -208,13 +218,25 @@ Specs of *available*:
 
 * Test (2/2)
 
-.code layout.go /tested.GetAvailableMachine/,/^}/
+.code layout.go /Bookkeeper{/,/^}/
 
-🔖 [[https://github.com/vektra/mockery][vektra/mockery]]
-🔖 [[https://github.com/stretchr/testify][stretchr/testify]]
+⚙️ [[https://github.com/vektra/mockery][vektra/mockery]]
+⚙️ [[https://github.com/stretchr/testify][stretchr/testify]]
 
 
-* Container delivered
+* Problems solved 
+
+_Document_ _it_ _is_ _easy_
+🙂 Code structures tells more things
+
+_Test_ _it_ _is_ _easy_
+🙂 Replace dependency by mock
+
+_Change_ _it_ _is_ _easy_
+🙂 Depends on abstraction
+
+
+* Container delivery
 
 
 * Running unit
@@ -231,7 +253,7 @@ Specs of *available*:
 
 .code layout.go /golang:1.7.1/,/rm \/go/
 
-- Pre-installed dependencies -> Shorter build time
+- Pre-installed dependencies 👉 Shorter build time
 
 
 * Building deployed image
@@ -252,16 +274,23 @@ Specs of *available*:
 
 _Mono_ _repo_
 
-- Build and Test 👉 It's abount *INTEGRATION* (later)
-- Operational complexity 👉 It's about *DELIVERY* (later)
+_Build_ _and_ _Test_ 
+👉 It's about *INTEGRATION* (later)
+
+_Operational_ _complexity_ 
+👉 It's about *DELIVERY* (later)
 
 _How_
 
+- Leverage toolchain
 - Looks every changes of modules as a whole (Each MR triggers all modules build/test)
 - Same image for different environments
 
 
-* Conclusion
+⚙️ [[https://github.com/rsc/gt][rsc/gt]]
+
+
+* Recap
 
 _Mono_ _repo_
 📌 Developers don't have to be full-stack but teams should be - Martin Fowler
@@ -271,5 +300,10 @@ _Clean_ _architecture_
 
 _Container_ _delivered_
 📌 Microservices with easier operation
+
+
+* Conclusion
+
+Go is the mindset changing programming language
 
 .image images/gome.png 250 _
